@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:inventory/pages/File/AddFilePage.dart';
 import 'package:inventory/pages/File/FilePage.dart';
 
 void main() {

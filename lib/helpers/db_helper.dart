@@ -30,7 +30,7 @@ class DbHelper {
   Future<Database> initDatabase() async {
     final Directory databasesPath = await getApplicationDocumentsDirectory();
 
-    final String path = join(databasesPath.path, 'newww.db');
+    final String path = join(databasesPath.path, 'inventorylatest.db');
 
     return await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute('''
@@ -261,9 +261,8 @@ class DbHelper {
       );
     }
 
-    final Directory appDocumentsDirectory =
-        await getApplicationDocumentsDirectory();
-    final String pdfPath = '${appDocumentsDirectory.path}/database_export.pdf';
+    final Directory? getExternalDirectory = await getExternalStorageDirectory();
+    final String pdfPath = '${getExternalDirectory!.path}/database_export.pdf';
     final File pdfFile = File(pdfPath);
     await pdfFile.writeAsBytes(await pdf.save());
 
