@@ -1,109 +1,142 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:inventory/models/File.dart';
-import 'package:inventory/models/Room.dart';
-
+import 'package:inventory/models.dart';
 import 'package:inventory/helpers/db_helper.dart';
-import 'package:inventory/pages/Item/ItemPage.dart';
+import 'package:inventory/pages/Item/ItemsPage.dart';
+import 'dart:convert';
+
+import '../../widgets/AnimatedListTile.dart';
+import 'AddRoomPage.dart';
+import 'EditRoomPage.dart';
 
 class RoomPage extends StatefulWidget {
   final FileModel file;
 
-  RoomPage(this.file);
+  RoomPage({required this.file});
 
   @override
   _RoomPageState createState() => _RoomPageState();
 }
 
 class _RoomPageState extends State<RoomPage> {
-  late DbHelper _dbHelper;
   List<RoomModel> _rooms = [];
-
-  int _generateUniqueId() {
-    final random = Random();
-    return random.nextInt(9999999) + DateTime.now().millisecondsSinceEpoch;
-  }
 
   @override
   void initState() {
     super.initState();
-    _dbHelper = DbHelper();
-    _fetchRooms();
+    _getRooms();
   }
 
-  Future<void> _fetchRooms() async {
-    final rooms = await _dbHelper.getRoomsByFileId(widget.file.id);
+  Future<void> _getRooms() async {
+    final dbHelper = DbHelper();
+    final rooms = await dbHelper.getRooms(widget.file.id);
     setState(() {
       _rooms = rooms;
     });
   }
 
-  Future<void> _addNewRoom() async {
-    final newRoom = RoomModel(
-      id: _generateUniqueId(),
-      name: 'New Room',
-      items: [],
-    );
-
-    await _dbHelper.insertRoom(newRoom);
-    _fetchRooms();
-  }
-
-  Future<void> _editRoom(RoomModel room) async {
-    // final updatedRoom = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => EditRoomPage(room),
-    //   ),
-    // );
-
-    // if (updatedRoom != null && updatedRoom is RoomModel) {
-    //   await _dbHelper.updateRoom(updatedRoom);
-    //   _fetchRooms();
-    // }
-  }
-
-  Future<void> _deleteRoom(RoomModel room) async {
-    await _dbHelper.deleteRoom(room.id);
-    _fetchRooms();
-  }
-
-  Future<void> _viewItems(RoomModel room) async {
+  void _addRoom() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ItemPage(room: room),
+          builder: (context) => AddRoomPage(
+                file: widget.file,
+              )),
+    ).then((_) {
+      _getRooms();
+    });
+  }
+
+  void _editRoom(RoomModel room) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EditRoomPage(room: room)),
+    ).then((shouldRefresh) {
+      if (shouldRefresh == true) {
+        _getRooms();
+      }
+    });
+  }
+
+  void _deleteRoom(RoomModel room) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Room'),
+          content: Text('Are you sure you want to delete this Room?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                _performDelete(room);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _performDelete(RoomModel room) async {
+    final dbHelper = DbHelper();
+    await dbHelper.deleteRoom(room.id);
+    _getRooms();
+  }
+
+  void _viewItems(RoomModel room) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ItemsPage(room: room),
       ),
     );
+  }
+
+  Widget _buildRoomItem(BuildContext context, int index) {
+    final room = _rooms[index];
+    final imageBytes = base64Decode(room.roomImage);
+
+    return AnimatedListTile(
+        imageBytes: imageBytes,
+        title: room.roomName,
+        onDeletePressed: () => _deleteRoom(room),
+        onEditPressed: () => _editRoom(room),
+        onTapPressed: () => _viewItems(room));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rooms'),
-      ),
-      body: ListView.builder(
-        itemCount: _rooms.length,
-        itemBuilder: (context, index) {
-          final room = _rooms[index];
-          return ListTile(
-            title: Text(room.name),
-            onTap: () {
-              _viewItems(room);
+        title: Text('Room Page'),
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              final dbHelper = DbHelper();
+              await dbHelper.generatePDF();
             },
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                _deleteRoom(room);
-              },
-            ),
-          );
-        },
+            child: Text('Export as PDF'),
+          )
+        ],
       ),
+      body: _rooms.isEmpty
+          ? const Center(
+              child: Text('No Room Available.Tap + to Add Room.',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            )
+          : ListView.builder(
+              itemCount: _rooms.length,
+              itemBuilder: _buildRoomItem,
+            ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addNewRoom,
+        onPressed: _addRoom,
         child: Icon(Icons.add),
       ),
     );

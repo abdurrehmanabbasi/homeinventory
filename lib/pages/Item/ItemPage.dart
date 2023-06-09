@@ -1,28 +1,39 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:inventory/models/Item.dart';
-import 'package:inventory/models/Room.dart';
+import 'package:inventory/models.dart';
 
 class ItemPage extends StatelessWidget {
-  final RoomModel room;
+  final ItemModel item;
 
-  ItemPage({required this.room});
+  ItemPage({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Items'),
+        title: Text('Item Details'),
       ),
-      body: ListView.builder(
-        itemCount: room.items.length,
-        itemBuilder: (context, index) {
-          final item = room.items[index];
-          return ListTile(
-            leading: Image.network(item.image),
-            title: Text(item.name),
-            subtitle: Text(item.details),
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.memory(base64Decode(item.itemImage), fit: BoxFit.cover),
+            SizedBox(
+              height: 8.0,
+            ),
+            Text(
+              'Name: ${item.itemName}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.0),
+            Text('Description: ${item.itemDetails}'),
+            SizedBox(height: 8.0),
+            Text('Loss is ${item.loss}')
+            // Add more details of the item as needed
+          ],
+        ),
       ),
     );
   }

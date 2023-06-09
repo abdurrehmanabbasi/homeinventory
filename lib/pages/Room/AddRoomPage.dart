@@ -7,14 +7,18 @@ import 'package:inventory/global.dart';
 import 'package:inventory/models.dart';
 import 'package:inventory/helpers/db_helper.dart';
 
-class AddFilePage extends StatefulWidget {
+class AddRoomPage extends StatefulWidget {
+  final FileModel file;
+
+  AddRoomPage({required this.file});
+
   @override
-  _AddFilePageState createState() => _AddFilePageState();
+  _AddRoomPageState createState() => _AddRoomPageState();
 }
 
-class _AddFilePageState extends State<AddFilePage> {
+class _AddRoomPageState extends State<AddRoomPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _fileNameController = TextEditingController();
+  final TextEditingController _roomNameController = TextEditingController();
   File? _selectedImage;
 
   void _selectImage() async {
@@ -27,19 +31,20 @@ class _AddFilePageState extends State<AddFilePage> {
     }
   }
 
-  void _addFile() async {
+  void _addRoom() async {
     if (_formKey.currentState!.validate() && _selectedImage != null) {
-      final fileBytes = await _selectedImage!.readAsBytes();
-      final fileBase64 = base64Encode(fileBytes);
+      final imageBytes = await _selectedImage!.readAsBytes();
+      final roomImage = base64Encode(imageBytes);
 
-      final file = FileModel(
+      final room = RoomModel(
         id: generateUniqueId(),
-        fileName: _fileNameController.text,
-        fileImage: fileBase64,
+        roomName: _roomNameController.text,
+        roomImage: roomImage,
+        fileId: widget.file.id,
       );
 
       final dbHelper = DbHelper();
-      await dbHelper.insertFile(file);
+      await dbHelper.insertRoom(room);
 
       Navigator.pop(context, true);
     }
@@ -49,7 +54,7 @@ class _AddFilePageState extends State<AddFilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add File'),
+        title: Text('Add Room'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -59,11 +64,11 @@ class _AddFilePageState extends State<AddFilePage> {
             child: Column(
               children: [
                 TextFormField(
-                  controller: _fileNameController,
-                  decoration: InputDecoration(labelText: 'File Name'),
+                  controller: _roomNameController,
+                  decoration: InputDecoration(labelText: 'Room Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a file name';
+                      return 'Please enter a room name';
                     }
                     return null;
                   },
@@ -82,8 +87,8 @@ class _AddFilePageState extends State<AddFilePage> {
                 ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: _addFile,
-                  child: Text('Add File'),
+                  onPressed: _addRoom,
+                  child: Text('Add Room'),
                 ),
               ],
             ),

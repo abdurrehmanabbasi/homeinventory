@@ -3,19 +3,37 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:inventory/global.dart';
 import 'package:inventory/models.dart';
 import 'package:inventory/helpers/db_helper.dart';
 
-class AddFilePage extends StatefulWidget {
+class EditRoomPage extends StatefulWidget {
+  final RoomModel room;
+
+  EditRoomPage({required this.room});
+
   @override
-  _AddFilePageState createState() => _AddFilePageState();
+  _EditRoomPageState createState() => _EditRoomPageState();
 }
 
-class _AddFilePageState extends State<AddFilePage> {
+class _EditRoomPageState extends State<EditRoomPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _fileNameController = TextEditingController();
+  final TextEditingController _roomNameController;
+
   File? _selectedImage;
+
+  _EditRoomPageState() : _roomNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _roomNameController.text = widget.room.roomName;
+  }
+
+  @override
+  void dispose() {
+    _roomNameController.dispose();
+    super.dispose();
+  }
 
   void _selectImage() async {
     final picker = ImagePicker();
@@ -27,19 +45,25 @@ class _AddFilePageState extends State<AddFilePage> {
     }
   }
 
-  void _addFile() async {
-    if (_formKey.currentState!.validate() && _selectedImage != null) {
-      final fileBytes = await _selectedImage!.readAsBytes();
-      final fileBase64 = base64Encode(fileBytes);
+  void _updateRoom() async {
+    if (_formKey.currentState!.validate()) {
+      final roomName = _roomNameController.text;
 
-      final file = FileModel(
-        id: generateUniqueId(),
-        fileName: _fileNameController.text,
-        fileImage: fileBase64,
+      String roomImage = widget.room.roomImage!;
+      if (_selectedImage != null) {
+        final imageBytes = await _selectedImage!.readAsBytes();
+        roomImage = base64Encode(imageBytes);
+      }
+
+      final updatedRoom = RoomModel(
+        id: widget.room.id,
+        roomName: roomName,
+        roomImage: roomImage,
+        fileId: widget.room.fileId,
       );
 
       final dbHelper = DbHelper();
-      await dbHelper.insertFile(file);
+      await dbHelper.updateRoom(updatedRoom);
 
       Navigator.pop(context, true);
     }
@@ -49,7 +73,7 @@ class _AddFilePageState extends State<AddFilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add File'),
+        title: Text('Edit Room'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -59,11 +83,11 @@ class _AddFilePageState extends State<AddFilePage> {
             child: Column(
               children: [
                 TextFormField(
-                  controller: _fileNameController,
-                  decoration: InputDecoration(labelText: 'File Name'),
+                  controller: _roomNameController,
+                  decoration: InputDecoration(labelText: 'Room Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a file name';
+                      return 'Please enter a room name';
                     }
                     return null;
                   },
@@ -82,8 +106,8 @@ class _AddFilePageState extends State<AddFilePage> {
                 ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: _addFile,
-                  child: Text('Add File'),
+                  onPressed: _updateRoom,
+                  child: Text('Update Room'),
                 ),
               ],
             ),

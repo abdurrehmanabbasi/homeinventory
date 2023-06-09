@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/HomePage.dart';
+import 'package:inventory/pages/File/AddFilePage.dart';
 import 'package:inventory/pages/File/FilePage.dart';
 
 void main() {
@@ -14,9 +14,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Inventory',
       theme: ThemeData(
-        primarySwatch: Colors.amber,
+        primarySwatch: Colors.blueGrey,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: FilePage(),
