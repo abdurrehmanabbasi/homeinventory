@@ -28,9 +28,9 @@ class DbHelper {
   DbHelper.internal();
 
   Future<Database> initDatabase() async {
-    final Directory databasesPath = await getApplicationDocumentsDirectory();
+    final Directory? databasesPath = await getExternalStorageDirectory();
 
-    final String path = join(databasesPath.path, 'inventorylatest.db');
+    final String path = join(databasesPath!.path, 'inventorylatest.db');
 
     return await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute('''

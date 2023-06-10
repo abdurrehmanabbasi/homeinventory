@@ -21,7 +21,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
   final TextEditingController _roomNameController = TextEditingController();
   File? _selectedImage;
 
-  void _selectImage() async {
+  void _selectImageFromGallery() async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
@@ -29,6 +29,55 @@ class _AddRoomPageState extends State<AddRoomPage> {
         _selectedImage = File(pickedImage.path);
       });
     }
+  }
+
+  void _selectImageFromCamera() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  void _uploadAlert() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            title: Text('Please choose media to select'),
+            content: Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    //if user click this button, user can upload image from gallery
+                    onPressed: _selectImageFromGallery,
+                    child: Row(
+                      children: [
+                        Icon(Icons.image),
+                        Text('From Gallery'),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    //if user click this button. user can upload image from camera
+                    onPressed: _selectImageFromCamera,
+                    child: Row(
+                      children: [
+                        Icon(Icons.camera),
+                        Text('From Camera'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   void _addRoom() async {
@@ -82,7 +131,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
                     : Container(),
                 SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: _selectImage,
+                  onPressed: _uploadAlert,
                   child: Text('Select Image'),
                 ),
                 SizedBox(height: 16.0),

@@ -39,7 +39,7 @@ class _EditItemPageState extends State<EditItemPage> {
     super.dispose();
   }
 
-  void _selectImage() async {
+  void _selectImageFromGallery() async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
@@ -49,12 +49,61 @@ class _EditItemPageState extends State<EditItemPage> {
     }
   }
 
+  void _selectImageFromCamera() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  void _uploadAlert() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            title: Text('Please choose media to select'),
+            content: Container(
+              height: MediaQuery.of(context).size.height / 6,
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    //if user click this button, user can upload image from gallery
+                    onPressed: _selectImageFromGallery,
+                    child: Row(
+                      children: [
+                        Icon(Icons.image),
+                        Text('From Gallery'),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    //if user click this button. user can upload image from camera
+                    onPressed: _selectImageFromCamera,
+                    child: Row(
+                      children: [
+                        Icon(Icons.camera),
+                        Text('From Camera'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   void _updateItem() async {
     if (_formKey.currentState!.validate()) {
       final String itemName = _itemNameController.text;
       final String itemDescription = _itemDescriptionController.text;
       String itemImage =
-          widget.item.itemImage!; // Retain the existing item image
+          widget.item.itemImage; // Retain the existing item image
       if (_selectedImage != null) {
         final imageBytes = await _selectedImage!.readAsBytes();
         itemImage = base64Encode(imageBytes);
@@ -131,7 +180,7 @@ class _EditItemPageState extends State<EditItemPage> {
                     : Container(),
                 SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: _selectImage,
+                  onPressed: _uploadAlert,
                   child: Text('Select Image'),
                 ),
                 SizedBox(height: 16.0),
