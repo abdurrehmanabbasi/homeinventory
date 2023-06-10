@@ -66,7 +66,10 @@ class _EditFilePageState extends State<EditFilePage> {
                 children: [
                   ElevatedButton(
                     //if user click this button, user can upload image from gallery
-                    onPressed: _selectImageFromGallery,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _selectImageFromGallery();
+                    },
                     child: Row(
                       children: [
                         Icon(Icons.image),
@@ -76,7 +79,10 @@ class _EditFilePageState extends State<EditFilePage> {
                   ),
                   ElevatedButton(
                     //if user click this button. user can upload image from camera
-                    onPressed: _selectImageFromCamera,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _selectImageFromCamera();
+                    },
                     child: Row(
                       children: [
                         Icon(Icons.camera),
@@ -143,7 +149,7 @@ class _EditFilePageState extends State<EditFilePage> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _uploadAlert,
-                child: Text('Select Image'),
+                child: Text('Upload Image'),
               ),
               SizedBox(height: 16.0),
               ElevatedButton(

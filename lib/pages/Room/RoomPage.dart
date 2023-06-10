@@ -115,16 +115,7 @@ class _RoomPageState extends State<RoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Room Page'),
-        actions: [
-          ElevatedButton(
-            onPressed: () async {
-              final dbHelper = DbHelper();
-              await dbHelper.generatePDF();
-            },
-            child: Text('Export as PDF'),
-          )
-        ],
+        title: Text('Rooms in ${widget.file.fileName}'),
       ),
       body: _rooms.isEmpty
           ? const Center(

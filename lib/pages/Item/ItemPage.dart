@@ -12,27 +12,32 @@ class ItemPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Item Details'),
+        title: Text(item.itemName),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.memory(base64Decode(item.itemImage), fit: BoxFit.cover),
-            SizedBox(
-              height: 8.0,
-            ),
-            Text(
-              'Name: ${item.itemName}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8.0),
-            Text('Description: ${item.itemDetails}'),
-            SizedBox(height: 8.0),
-            Text('Loss is ${item.loss}')
-            // Add more details of the item as needed
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.memory(base64Decode(item.itemImage), fit: BoxFit.cover),
+              SizedBox(
+                height: 8.0,
+              ),
+              Text(
+                'Name: ${item.itemName}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8.0),
+              Text('Description: ${item.itemDetails}'),
+              SizedBox(height: 8.0),
+              Text(
+                '${item.loss ? 'Item marked as Lossed' : ''}',
+                style: TextStyle(color: Colors.red),
+              )
+              // Add more details of the item as needed
+            ],
+          ),
         ),
       ),
     );

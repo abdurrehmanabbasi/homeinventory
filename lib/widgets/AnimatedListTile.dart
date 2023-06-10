@@ -45,38 +45,42 @@ class _AnimatedListTileState extends State<AnimatedListTile>
     _controller.forward();
     return FadeTransition(
       opacity: _animation,
-      child: ListTile(
-        leading: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: 44,
-            minHeight: 44,
-            maxWidth: 64,
-            maxHeight: 64,
+      child: Card(
+        elevation: 2,
+        margin: const EdgeInsets.all(4),
+        child: ListTile(
+          leading: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: 44,
+              minHeight: 44,
+              maxWidth: 64,
+              maxHeight: 64,
+            ),
+            child: Image.memory(widget.imageBytes, fit: BoxFit.cover),
           ),
-          child: Image.memory(widget.imageBytes, fit: BoxFit.cover),
-        ),
-        title: Text(widget.title),
-        onTap: widget.onTapPressed,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              child: Text(
-                '${widget.loss ? 'Lossed Item' : ''}',
-                style: TextStyle(color: Colors.red),
+          title: Text(widget.title),
+          onTap: widget.onTapPressed,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                child: Text(
+                  '${widget.loss ? '*Lossed' : ''}',
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
-            ),
-            IconButton(
-              color: Colors.blue,
-              icon: Icon(Icons.edit),
-              onPressed: widget.onEditPressed,
-            ),
-            IconButton(
-              color: Colors.red,
-              icon: Icon(Icons.delete),
-              onPressed: widget.onDeletePressed,
-            ),
-          ],
+              IconButton(
+                color: Colors.blue,
+                icon: Icon(Icons.edit),
+                onPressed: widget.onEditPressed,
+              ),
+              IconButton(
+                color: Colors.red,
+                icon: Icon(Icons.delete),
+                onPressed: widget.onDeletePressed,
+              ),
+            ],
+          ),
         ),
       ),
     );

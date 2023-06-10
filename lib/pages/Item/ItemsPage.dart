@@ -116,7 +116,7 @@ class _ItemsPageState extends State<ItemsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Items Page'),
+        title: Text('Items in ${widget.room.roomName}'),
       ),
       body: _items.isEmpty
           ? const Center(

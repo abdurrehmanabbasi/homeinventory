@@ -69,7 +69,10 @@ class _EditRoomPageState extends State<EditRoomPage> {
                 children: [
                   ElevatedButton(
                     //if user click this button, user can upload image from gallery
-                    onPressed: _selectImageFromGallery,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _selectImageFromGallery();
+                    },
                     child: Row(
                       children: [
                         Icon(Icons.image),
@@ -79,7 +82,10 @@ class _EditRoomPageState extends State<EditRoomPage> {
                   ),
                   ElevatedButton(
                     //if user click this button. user can upload image from camera
-                    onPressed: _selectImageFromCamera,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _selectImageFromCamera();
+                    },
                     child: Row(
                       children: [
                         Icon(Icons.camera),
