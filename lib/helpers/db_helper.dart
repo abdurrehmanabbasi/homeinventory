@@ -261,8 +261,8 @@ class DbHelper {
       );
     }
 
-    final Directory? getExternalDirectory = await getExternalStorageDirectory();
-    final String pdfPath = '${getExternalDirectory!.path}/database_export.pdf';
+    final Directory? outputDir = await getExternalStorageDirectory();
+    final String pdfPath = '${outputDir!.path}/database_export.pdf';
     final File pdfFile = File(pdfPath);
     await pdfFile.writeAsBytes(await pdf.save());
 
