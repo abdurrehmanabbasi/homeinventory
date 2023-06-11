@@ -4,6 +4,7 @@ import 'package:inventory/helpers/db_helper.dart';
 import 'package:inventory/pages/Item/ItemsPage.dart';
 import 'dart:convert';
 
+import '../../helpers/generate_report.dart';
 import '../../widgets/AnimatedListTile.dart';
 import 'AddRoomPage.dart';
 import 'EditRoomPage.dart';
@@ -114,9 +115,15 @@ class _RoomPageState extends State<RoomPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Rooms in ${widget.file.fileName}'),
-      ),
+      appBar: AppBar(title: Text('${widget.file.fileName} Rooms'), actions: [
+        ElevatedButton(
+          onPressed: () async {
+            final report = Report();
+            await report.byFile(widget.file);
+          },
+          child: Icon(Icons.picture_as_pdf_sharp),
+        )
+      ]),
       body: _rooms.isEmpty
           ? const Center(
               child: Text('No Room Available.Tap + to Add Room.',

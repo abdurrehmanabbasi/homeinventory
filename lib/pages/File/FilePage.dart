@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:inventory/models.dart';
 import 'package:inventory/helpers/db_helper.dart';
 import 'dart:convert';
-
 import '../../widgets/AnimatedListTile.dart';
 import '../Room/RoomPage.dart';
 import 'AddFilePage.dart';
@@ -110,16 +109,7 @@ class _FilePageState extends State<FilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Files'), actions: [
-        ElevatedButton(
-          onPressed: () async {
-            final dbHelper = DbHelper();
-            await dbHelper.generatePDF();
-          },
-          child:
-              Row(children: [Text('Export'), Icon(Icons.picture_as_pdf_sharp)]),
-        )
-      ]),
+      appBar: AppBar(title: Text('Files')),
       body: _files.isEmpty
           ? const Center(
               child: Text('No File Available.Tap + to Add File.',

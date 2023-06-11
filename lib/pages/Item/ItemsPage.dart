@@ -3,6 +3,7 @@ import 'package:inventory/models.dart';
 import 'package:inventory/helpers/db_helper.dart';
 import 'dart:convert';
 
+import '../../helpers/generate_report.dart';
 import '../../widgets/AnimatedListTile.dart';
 import 'AddItemPage.dart';
 import 'EditItemPage.dart';
@@ -115,9 +116,15 @@ class _ItemsPageState extends State<ItemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Items in ${widget.room.roomName}'),
-      ),
+      appBar: AppBar(title: Text('${widget.room.roomName} Items'), actions: [
+        ElevatedButton(
+          onPressed: () async {
+            final report = Report();
+            await report.byRoom(widget.room);
+          },
+          child: Icon(Icons.picture_as_pdf_sharp),
+        )
+      ]),
       body: _items.isEmpty
           ? const Center(
               child: Text('No Items Available. Tap + to Add Item.',

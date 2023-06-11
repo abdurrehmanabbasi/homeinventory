@@ -1,15 +1,6 @@
-import 'dart:io';
-import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:pdf/widgets.dart';
 import 'package:path/path.dart';
-import 'package:printing/printing.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:inventory/models.dart';
-import 'package:path_provider/path_provider.dart';
 
 class DbHelper {
   static final DbHelper _instance = DbHelper.internal();
@@ -201,71 +192,5 @@ class DbHelper {
       return ItemModel.fromMap(maps.first);
     }
     return null;
-  }
-
-  Future<void> generatePDF() async {
-    final List<FileModel> files = await getFiles();
-    final List<RoomModel> rooms = [];
-
-    for (final file in files) {
-      final List<RoomModel> fileRooms = await getRooms(file.id);
-      rooms.addAll(fileRooms);
-    }
-
-    final pdf = pw.Document();
-
-    final font = await PdfGoogleFonts.nunitoExtraLight();
-
-    for (final file in files) {
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Center(
-              child: pw.Text(file.fileName, style: pw.TextStyle(font: font)),
-            );
-          },
-        ),
-      );
-    }
-
-    for (final room in rooms) {
-      final List<ItemModel> items = await getItems(room.id);
-
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            final List<pw.Widget> itemWidgets = [];
-
-            for (final item in items) {
-              itemWidgets.add(
-                pw.Text(item.itemName, style: pw.TextStyle(font: font)),
-              );
-              itemWidgets.add(
-                pw.Text(item.itemDetails, style: pw.TextStyle(font: font)),
-              );
-              itemWidgets.add(
-                pw.SizedBox(height: 10),
-              );
-            }
-
-            return pw.Center(
-              child: pw.Column(
-                children: [
-                  pw.Text(room.roomName, style: pw.TextStyle(font: font)),
-                  pw.Column(children: itemWidgets),
-                ],
-              ),
-            );
-          },
-        ),
-      );
-    }
-
-    final Directory? outputDir = await getExternalStorageDirectory();
-    final String pdfPath = '${outputDir!.path}/database_export.pdf';
-    final File pdfFile = File(pdfPath);
-    await pdfFile.writeAsBytes(await pdf.save());
-
-    print(pdfPath);
   }
 }
