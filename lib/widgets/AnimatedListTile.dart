@@ -66,16 +66,16 @@ class _AnimatedListTileState extends State<AnimatedListTile>
               Container(
                 child: Text(
                   '${widget.loss ? '*Lossed' : ''}',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.red.shade900),
                 ),
               ),
               IconButton(
-                color: Colors.blue,
+                color: Colors.blue.shade700,
                 icon: Icon(Icons.edit),
                 onPressed: widget.onEditPressed,
               ),
               IconButton(
-                color: Colors.red,
+                color: Colors.red.shade700,
                 icon: Icon(Icons.delete),
                 onPressed: widget.onDeletePressed,
               ),
